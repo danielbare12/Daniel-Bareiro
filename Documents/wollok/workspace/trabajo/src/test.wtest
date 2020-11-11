@@ -1,0 +1,70 @@
+import empresa.*
+
+describe "Test de bsrrilete Cosmico" {
+	const lastToninas = new Destino(nombre = "Last Toninas", equipajeImprecindible = ["Vacuna gripal","Vacuna B","Necronomicon"],precio = 3500)
+    const goodAirs = new Destino(nombre = "Good Airs", equipajeImprecindible = ["Cerveza","Protector solar"],precio = 1500)
+    const garlicSea = new Destino(nombre = "Garlic's Sea", equipajeImprecindible = ["Caña de pescar","Piloto"],precio = 2500)
+    const silverSea = new Destino(nombre = "Silver's Sea", equipajeImprecindible = ["Protector solar","Equipo de buceo"],precio = 1350)
+    
+    const pabloHari = new Usuario(usuario = "PHari",destinosConocidos = [lastToninas,goodAirs],saldo = 1500)
+    const dani = new Usuario(usuario = "Dbareiro",destinosConocidos = [],saldo = 0)
+    
+    fixture {
+    	barrileteCosmico.agregarDestino(lastToninas)
+    	barrileteCosmico.agregarDestino(goodAirs)
+    	barrileteCosmico.agregarDestino(garlicSea)
+    	barrileteCosmico.agregarDestino(silverSea)
+    }
+
+test "Los destinos mas importantes son Garlic's sea y Last Toninas"{
+	assert.equals([lastToninas, garlicSea],barrileteCosmico.destinosImportantes())
+}
+
+
+test "Un destino que no tiene vacunas, no es un destino peligroso"{
+	assert.notThat(silverSea.esPeligroso())
+}
+
+test "A todos se les aplica un descuento del %15 y se les aplica en el equipaje el certificado de descuento"{
+	barrileteCosmico.aplicarDescuentoATodos(15)
+	assert.equals(2975,lastToninas.precio())
+	assert.equals(["Vacuna gripal","Vacuna B","Necronomicon","Certificado de descuento"],lastToninas.equipajeImprecindible())
+	assert.equals(2125,garlicSea.precio())
+	assert.equals(["Caña de pescar","Piloto","Certificado de descuento"],garlicSea.equipajeImprecindible())
+	assert.equals(1147.5,silverSea.precio())
+	assert.equals(["Protector solar","Equipo de buceo","Certificado de descuento"],silverSea.equipajeImprecindible())
+	assert.equals(1275,goodAirs.precio())
+	assert.equals(["Cerveza","Protector solar","Certificado de descuento"],goodAirs.equipajeImprecindible())
+}
+
+test "Los destinos mas peligrosos de Barrilete Cosmico son Last Toninas"{
+	assert.equals([lastToninas],barrileteCosmico.losDestinosMasPeligrosos())
+}
+
+test "Se muestra todos los destinos de la carta de barrilete cosmico"{
+	assert.equals(["Last Toninas", "Good Airs", "Garlic's Sea", "Silver's Sea"],barrileteCosmico.cartaDeDestinos())
+}
+
+test "Barrilete Cosmico es una empresa extrema"{
+	assert.that(barrileteCosmico.empresaExtrema())
+}
+
+test "Las millas de Pablo Hari son 500 kilometros"{
+	assert.equals(500,pabloHari.millas())
+}
+
+test "Pablo Hari puede volar a Siver's Sea y es agregado a su historial"{
+	pabloHari.volarADestino(silverSea)
+	assert.equals([lastToninas, goodAirs, silverSea],pabloHari.destinosConocidos())
+}
+
+test "Pablo Hari puede volar a Siver's Sea y su saldo es de 150"{
+	pabloHari.volarADestino(silverSea)
+	assert.equals(150,pabloHari.saldo())
+}
+
+test "Pablo Hari empieza a seguir a dani y lo agrega a su lista de seguidores"{
+	pabloHari.seguirUsuario(dani)
+	assert.equals([dani],pabloHari.seguidos())
+}
+}
